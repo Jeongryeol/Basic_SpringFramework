@@ -33,8 +33,9 @@ public class HelloMain {
 		System.out.println(insa);
 		System.out.println("===============================================================");
 		
+		
 		/** 1번 방법(2) : xml + 구현체클래스 setter 메소드 + BeanFactory */
-			//Xml묺서로부터 BeanFactory 객체를 주입받음
+			//Xml문서로부터 BeanFactory 객체를 주입받음
 		String path_win = "E:\\dev_spring201804\\spring4LAB\\src\\com\\di\\helloBean.xml";
 		String path_mac = "src/com/di/helloBean.xml";
 		Resource resource = new FileSystemResource(path_mac);
@@ -45,6 +46,7 @@ public class HelloMain {
 			//출력하기
 		System.out.println(insa2);
 		System.out.println("===============================================================");
+		
 		
 		/** 2번방법 : xml + 생성자 이용하기 */
 			//xml문서로부터  ApplicationContext 객체를 주입받음

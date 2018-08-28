@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- id는 인스턴스변수 정도로 생각 -->
+	<bean id="listTest" class="com.data_structure.ListSetter">
+		<property name="listBean"><!-- setter객체 주입법 적용예정 -->
+			<list><!-- java의 List를 지원하는 xml태그 -->
+				<value>Hi...</value>
+				<value>Have a good time!!</value>
+				<value>Hava a nice day!!</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>

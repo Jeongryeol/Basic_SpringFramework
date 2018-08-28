@@ -3,12 +3,14 @@
 <beans 	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	<!-- 방법 1 :: xml + setter메소드 + BeanFactory -->
+	<!-- [ java안에서 필요한 객체를 주입받는 권장방법 ] -->
 	<bean id="helloBean" class="com.di.HelloBeanImpl">	<!-- xml문서에서 id에 따라 bean객체를 찾아내고, 구현체 클래스를 인식합니다. -->
-		<property name="msg">		<!-- ApplicationContext 객체 혹은 beanFactory 객체가 자원관리를 대신해 줍니다. 스프링에서 필요한 시점에서 객체를 주입합니다. -->
-			<value>Hi!!!</value>	<!-- spring-context.jar, spring-beans.jar 이 두 개의 모듈은 spring-core.jar 기반에서 동작합니다. -->
+		<property name="msg">	 <!-- ApplicationContext 객체 혹은 beanFactory 객체가 자원관리를 대신해 줍니다. 스프링에서 필요한 시점에서 객체를 주입합니다. -->
+			<value>Hi!!!</value> <!-- spring-context.jar, spring-beans.jar 이 두 개의 모듈은 spring-core.jar 기반에서 동작합니다. -->
 		</property>
 	</bean>
 	<!-- 방법 2 :: xml + 생성자를 이용한 주입 -->
+	<!-- [환경설정할때 주로 사용 : Spring과 myBatis, jdbc관련 객체주입 (Connection정보)] -->
 	<bean id="myCar" class="com.di.Car">	<!-- 생성자로 주xml문서에서 id에 따라 bean객체를 찾아내고, 구현체 클래스를 인식합니다. -->
 		<constructor-arg index="0" type="java.lang.String" value="Sonata"/>
 		<constructor-arg index="1" type="java.lang.String" value="White"/>
