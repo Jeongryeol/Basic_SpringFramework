@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="util.db_mybatis.compare_pojo.member">
+<!-- 읽지 않은 쪽지 갯수 처리 -->
+   <select id="countMemo" parameterType="java.lang.String" resultType="int"><!--  selectList|selectMap|selectOne -->
+      SELECT count(*)
+         FROM memo
+        WHERE to_id= #{to_id}<!-- 세션아이디 -->
+          AND read_yn = 'N' 
+   </select>
+<!-- 받은  쪽지함 구현 쿼리 -->
+   <select id="receiveMemoList" parameterType="java.lang.String" resultType="map">
+    SELECT rownum rno, memo.cdate, member.mem_name, DECODE(memo.read_yn,'Y','읽음','안읽음') read_yn
+      FROM member, memo  
+     WHERE member.mem_id = memo.from_id
+       AND memo.to_id = utl_encode.text_encode(#{to_id},'UTF8',1)   
+   </select>
+<!-- 쪽지 보내기 구현 쿼리 -->
+ <insert id="memoInsert" parameterType="map">
+    INSERT INTO memo(no, from_id, to_id, memo_content, cdate, read_yn) 
+              VALUES(seq_memo_no.nextval
+                     , #{from_id}, #{to_id}, #{memo_content}
+                     , to_char(sysdate,'YYYY-MM-DD'), 'N')
+ </insert>
+<!-- 우편번호 검색 쿼리 -->
+ <select id="zipCodeList" parameterType="java.lang.String" resultType="map">
+    SELECT zipcode, address FROM zipcode_t
+    <if test="value!=null">
+     WHERE dong LIKE '%'||#{value}||'%'
+    </if>
+ </select>
+<!-- 임시비번 발번 쿼리 -->
+ <select id="getImsiPW" parameterType="java.lang.String" resultType="java.lang.String">
+ select translate((
+                 SELECT mem_pw 
+                   FROM member 
+                  WHERE mem_id=#{value} 
+                ),'abcdefghijklmnopqrstuvwxyz0123456789'
+                 ,'yz012ftugmx3hi6nos78pqrcde4vw5abjkl9') as imsi_pw
+  from dual
+ </select>
+<!-- 아이디가 존재하는지 체크 -->
+ <select id="idExist" parameterType="java.lang.String" resultType="int">
+   SELECT NVL((SELECT 2 as status FROM dual
+    WHERE EXISTS (SELECT mem_no FROM member
+                  WHERE mem_id=#{value} AND rownum=1)),-1) status
+    FROM dual    
+ </select>
+ <insert id="memberInsert" parameterType="map">
+    INSERT INTO member(mem_no, mem_id, mem_pw, mem_name, zipcode, address) 
+                VALUES(seq_member_no.nextval
+                     , #{mem_id}, #{mem_pw}, #{mem_name}
+                     , #{zipcode}, #{address})
+ </insert>
+ <!-- 아이디와 비번 체크
+ 주의 : 마이바티스는 조회결과를 자동으로 담는데 그 때 키값은 디폴트 대문자임.
+  -->
+ <select id="getMemberList" resultType="map" parameterType="map">
+    select mem_id, mem_name FROM member
+    <if test="mem_id!=null">
+     where mem_id = #{mem_id}
+    </if>
+    <if test="mem_pw!=null">
+       and mem_pw = #{mem_pw}
+    </if>    
+ </select>
+ <select id="memberList" resultType="map" parameterType="map">
+    <![CDATA[
+    select rownum rno
+          ,utl_encode.text_decode(mem_id,'UTF8',1) mem_id
+          ,mem_name
+          ,'<a href=javascript:memoForm()>쪽지쓰기</a>' as action
+      FROM member
+    ORDER BY rownum desc  
+    ]]>
+ </select> 
+ 
+</mapper>

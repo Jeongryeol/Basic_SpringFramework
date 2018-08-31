@@ -1,7 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	">
+	<!-- [비권장] BeanName으로 응답페이지 보기 -->
+	<!-- id는 인스턴스변수 정도로 생각 -->
+	<bean id="default-handler-mapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+	<!-- 리스트를 담는 자료구조 예제 -->
+	<bean name="/data_structure/listBean.sp" class="com.data_structure.ListController">
+		<property name="listBean"><!-- setter객체 주입법 적용예정 -->
+			<list><!-- java의 List를 지원하는 xml태그 -->
+				<value>Hi...</value>
+				<value>Have a good time!!</value>
+				<value>Hava a nice day!!</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 맵을 담는 자료구조 예제 -->
+	<bean name="/data_structure/mapBean.sp" class="com.data_structure.MapController">
+		<property name="mapBean">
+			<map>
+				<entry>
+					<key><value>가</value></key>
+					<value>Hello~</value>
+				</entry>				
+				<entry>
+					<key><value>나</value></key>
+					<value>Thank you for greeting</value>
+				</entry>				
+				<entry>
+					<key><value>다</value></key>
+					<value>I`m so happy</value>
+				</entry>				
+			</map>
+		</property>
+	</bean>
+<!-- ────[[ SimpleUrlHandlerMapping을 이용해서 메소드를 선택하는 코드 : Annotation을 이용하면 아래 코드는 없어도 됨 ]]──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- POJO와 Spring 을 비교하는 회원컨트롤 예제 -->
+	<!-- 원하는 메소드를 실행할 수 있는 Spring Framework -->
+	<context:component-scan base-package="com.compare_pojo"/>
+	<bean id="url-mapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<!-- URL패턴으로 들어오면 컨트롤러가 매핑된 bean으로 연결함 -->
+		<property name="mappings">
+			<props>
+			<!-- 목적페이지가 달라도 같은 컨트롤러에서 분기되기때문에 컨트롤러 이름이 같다. -->
+				<prop key="/compare_pojo/getMemberList.sp">member-controller</prop>
+				<prop key="/compare_pojo/memberInsert.sp">member-controller</prop>
+				<prop key="/compare_pojo/memberUpdate.sp">member-controller</prop>
+				<prop key="/compare_pojo/memberDelete.sp">member-controller</prop>
+				<prop key="/board/boardInsert.sp">board-controller</prop>
+			</props>
+		</property>
+	</bean>
+	<!--  -->
+	<bean id="board-controller" class="com.di.BoardController">
+		<property name="methodNameResolver" ref="board-resolver"/>
+		<property name="boardLogic" ref="board-logic"/>
+	</bean>
+	<bean id="board-resolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings">
+			<props>
+				<prop key="/board/boardInsert.sp">boardInsert</prop>
+			</props>
+		</property>
+	</bean>
+	<!--  -->
+	<bean id="member-controller" class="com.compare_pojo.MemberController">
+		<!-- 컨트롤러는 메소드이름으로 메소드를 실행할수 있도록 매핑된 bean으로 연결함-->
+		<property name="methodNameResolver" ref="member-resolver"/>
+		<!-- Logic클래스를 연결할수있도록 bean을 매핑함 -->
+		<property name="memberLogic" ref="member-logic"/>
+	</bean>
+	<bean id="member-resolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<!-- 메소드매핑된 bean이 가진 매핑된 키와 같을때 해당 메소드를 실행함 -->
+		<property name="mappings">
+		<!-- Properties pros = new Properties("/compare_pojo/getMemberList.sp","getMemberList") 를 작동하는 태그 -->
+			<props>
+			<!-- ModelAndView로 forward방식을 이용하는 select / 이때는 WEB-INF하위에 있는 목족페이지로 이동한다 -->
+				<prop key="/compare_pojo/getMemberList.sp">getMemberList</prop>
+			<!-- sendRedirect 방식을 이용하는 select / 이때는 Webcontent하위에 있는 목족페이지로 이동한다 -->
+				<prop key="/compare_pojo/memberInsert.sp">memberInsert</prop>
+				<prop key="/compare_pojo/memberUpdate.sp">memberUpdate</prop>
+				<prop key="/compare_pojo/memberDelete.sp">memberDelete</prop>
+			</props>
+		</property>
+	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 	<!-- Spring Container안에서  WEB-INF폴더 하위에 보안된 페이지에 로그인할때 접속하기위한 접두어,접미어를 생성하는 화면단해결사-->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
@@ -11,16 +97,5 @@
 			<value>.jsp</value>
 		</property>
 	</bean>
-	<!-- [비권장] BeanName으로 응답페이지 보기 -->
-	<bean id="default-handler-mapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
-	<!-- id는 인스턴스변수 정도로 생각 -->
-	<bean class="com.data_structure.ListController"  name="/data_structure/listBean.sp">
-		<property name="listBean"><!-- setter객체 주입법 적용예정 -->
-			<list><!-- java의 List를 지원하는 xml태그 -->
-				<value>Hi...</value>
-				<value>Have a good time!!</value>
-				<value>Hava a nice day!!</value>
-			</list>
-		</property>
-	</bean>
-</beans>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+</beans> 

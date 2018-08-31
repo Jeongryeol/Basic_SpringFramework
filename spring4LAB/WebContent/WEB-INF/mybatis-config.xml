@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- 사용자 정의 알리아스명 지정하기 -->
+<!-- 
+	<typeAliases>
+		<typeAlias alias="mvo" type="com.vo.MemberVO"/>
+	</typeAliases>
+ -->
+	<mappers>
+		<mapper resource="util/db_mybatis/compare_pojo/member.xml"/>
+		<mapper resource="util/db_mybatis/di/board.xml"/>
+	</mappers>
+</configuration>
