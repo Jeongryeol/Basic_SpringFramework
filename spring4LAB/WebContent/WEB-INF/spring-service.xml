@@ -12,7 +12,7 @@
 		</property>
 	</bean>
 <!-- Controller에서 setter로 주입한 Logic을 매핑 /spring이 이 클래스가 있는지 체크함 (없으면 ClassNotFoundException 발생)-->
-	<bean id="board-logic" class="com.di.BoardLogic">
+	<bean id="board-logic" class="com.compare_pojo.BoardLogic">
 		<property name="sqlBoardDao" ref="sql-board-dao"/>
 	</bean>
 	<bean id="member-logic" class="com.compare_pojo.MemberLogic">

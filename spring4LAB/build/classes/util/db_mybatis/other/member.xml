@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="util.db_mybatis.other.memberMapper">
+<!-- 
+	마이바티스의 id는 문서이름이 다르더라도 혹은 네임스페이스 이름이 다를지라도
+	반드시 unique해야합니다. (겹치지 않게 해야하므로, 설계서의 이름을 임의로 변경하면 팀에 민폐를 끼치게 됩니다.
+ -->
+	<select id="currentDay"  parameterType="int" resultType="String">
+		SELECT TO_CHAR(sysdate,'YYYY-MM-DD') FROM dual
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+

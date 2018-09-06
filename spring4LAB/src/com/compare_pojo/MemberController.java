@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,9 +44,23 @@ public class MemberController extends MultiActionController {//더이상 지원�
 		
 		List<Map<String,Object>> memberList = memberLogic.getMemberList(pMap);
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("memberList", memberList);
+		mav.addObject("memberList", memberList);//req.setAttribute와 같음
 		mav.setViewName("compare_pojo_view/getMemberList");// WEB_INF/view/member/getMemberList.jsp
 		return mav;
+		
+		/*
+		 * 404 에러가 발생했다면 이곳 Controller계층이 문제가 있는 상태임
+		 * 
+		 * 응답페이지에 대한 결정이 안된경우 404번을 나타냄
+		 * 	ex1.mav.setViewName(null);
+		 * 	ex2.return null;
+		 * 		이때, 콘솔창에서는 DB를 조회했을 것임.
+		 * 
+		 * MVC2 POJO방식에서의 디스패처로 목표페이지를 지정하는경우,Webcontents하위폴더를 인식하므로 404번이 발생함
+		 * 	RequestDispatcher view = req.getRequestDispatcher("./getMemberList.jsp");
+		 * 	view.forward(req, res);
+		 */
+		
 	}
 	//sendRedirect는 Webcontent밑에다가 둬야한다.
 	public void memberInsert(HttpServletRequest req, HttpServletResponse res)

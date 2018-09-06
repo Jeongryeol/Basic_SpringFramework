@@ -4,6 +4,8 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.oreilly.servlet.MultipartRequest;
 /*************************************************************************************
  * [[ Request → Map변환 클래스 ]] 
  * @author	Jeongryeol
@@ -11,9 +13,15 @@ import javax.servlet.http.HttpServletRequest;
  *************************************************************************************/
 public class HashMapBinder {
 	HttpServletRequest req = null;//요청객체 준비
+	//첨부파일 처리에 필요한 변수
+	MultipartRequest multi = null;
+	String realFolder = "";
+	String encType = "UTF-8";//첨부파일의 한글처리
+	int maxSize = 5*1024*1024;//5MB
 	//생성자
 	public HashMapBinder(HttpServletRequest req) {
 		this.req = req;//요청객체(request)의 원본주소를 받아 저장해둠
+		realFolder="";//각자서버의 위치경로 입력
 	}
 	//Web에서 보내진 요청객체의 자료를 토대로 (생성자 초기화)
 	//DB에 보낼 Map계열 자료형에 옮겨담아주는 클래스  

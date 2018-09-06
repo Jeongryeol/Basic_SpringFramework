@@ -4,13 +4,13 @@
  "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 <!-- 사용자 정의 알리아스명 지정하기 -->
-<!-- 
 	<typeAliases>
-		<typeAlias alias="mvo" type="com.vo.MemberVO"/>
+		<typeAlias alias="ovo" type="com.vo.OrderVO"/>
 	</typeAliases>
- -->
 	<mappers>
 		<mapper resource="util/db_mybatis/compare_pojo/member.xml"/>
 		<mapper resource="util/db_mybatis/di/board.xml"/>
+		<mapper resource="util/db_mybatis/other/member.xml"/>
+		<mapper resource="util/db_mybatis/mapper/order.xml"/>
 	</mappers>
 </configuration>

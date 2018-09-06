@@ -54,8 +54,7 @@
 			</props>
 		</property>
 	</bean>
-	<!--  -->
-	<bean id="board-controller" class="com.di.BoardController">
+	<bean id="board-controller" class="com.compare_pojo.BoardController">
 		<property name="methodNameResolver" ref="board-resolver"/>
 		<property name="boardLogic" ref="board-logic"/>
 	</bean>

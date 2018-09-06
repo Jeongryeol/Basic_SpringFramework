@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="util.db_mybatis.di.boardMapper">
-	<update id="hitUpdate" parameterType="map">
-		update boardMaster
-		   set b_hit = b_hit + 1
-		 where b_no =#{b_no}
-	</update>
+
 	<insert id="boardMInsert" parameterType="map">
 		INSERT INTO boardmaster(b_no, b_name, b_title, b_content
 		                       ,b_group, b_pos, b_step
@@ -18,48 +14,7 @@
 		INSERT INTO boardsub(b_no, b_seq, b_file, b_img)
 		                 VALUES(#{b_no}, #{b_seq}, #{b_file}, #{b_img})
 	</insert>
-<!-- 그룹번호 채번하는 쿼리문 추가(새글쓰기에서 필요) -->
-	<select id="getGroup" parameterType="map" resultType="int">
-	SELECT 
-      NVL((SELECT /*+index_desc(boardmaster iboardM_group)*/ b_group
-            FROM boardmaster
-           WHERE rownum = 1
-             AND b_group > 0),0)+1 b_group
-      FROM dual
-	</select>
-<!-- 	<statement id="stepUpdate" parameterType="map" resultType="map">
-		update boardMaster
-		      set b_step = b_step+1
-		  where b_group = #{b_group} 45(read.jsp)
-		     and b_step > #{b_step}   2(read.jsp)		
-	</statement> -->
-	<update id="stepUpdate" parameterType="map">
-		update boardMaster
-		      set b_step = b_step+1
-		  where b_group = #{b_group} <!-- 45(read.jsp) -->
-		     and b_step > #{b_step}   <!-- 2(read.jsp)	 -->
-	</update>
-	<select id="getBoardList" parameterType="map" resultType="map">
-		SELECT
-		          bm.b_no, bm.b_title, bm.b_name, bm.b_content
-		         ,bm.b_date, bm.b_hit, NVL(bs.b_file,'없음') b_file, bm.b_pwd
-		         ,bm.b_group, bm.b_pos, bm.b_step
-		 FROM boardMaster bm, boardSub bs
-		WHERE bm.b_no = bs.b_no(+)
-	 	<if test='b_no!=null'>
-	     		AND bm.b_no = #{b_no}
-	 	</if>		
-	 	<if test='column != null and column.equals("b_title")'>
-	     		AND bm.b_title LIKE '%'||#{sb_keyword}||'%'
-	 	</if>		
-	 	<if test='column != null and column.equals("b_content")'>
-	     		AND bm.b_content LIKE '%'||#{sb_keyword}||'%'
-	 	</if>		
-	 	<if test='column != null and column.equals("b_name")'>
-	     		AND bm.b_name LIKE '%'||#{sb_keyword}||'%'
-	 	</if>	
-	 	ORDER BY b_no desc	
-	</select>
+
 </mapper>
 
 

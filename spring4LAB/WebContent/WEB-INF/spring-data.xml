@@ -56,17 +56,27 @@
 		<!-- <property name="dataSource" ref="data-source-target"/> -->
 		<property name="dataSource" ref="data-source"/>
 	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 	<!-- SqlSession 만들기 -->
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
 		<!-- 생성자 주입법 -->
 		<constructor-arg index="0" ref="sqlSessionFactory"/>
 	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 	<!-- Logic에서 사용할 Dao클래스에 SqlSession을 주입함 -->
 	<bean id="sql-member-dao" class="com.compare_pojo.SqlMemberDao">
 		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
 	</bean>
+	<bean id="sql-board-dao" class="com.compare_pojo.SqlBoardDao">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
+	</bean>
+ 	<bean id="sql-test-dao" class="com.other.SqlTestDao">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
+	</bean>
 <!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
-	<bean id="sql-board-dao" class="com.di.SqlBoardDao">
+	<!-- 아래코드는 하이버네이트 방식과 유사한 패턴 -->
+ 	<bean id="sqlOrderDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.dao.SqlOrderDao"/><!-- 따로 인터페이스를 구현하지 않아도 만들어준다. 이때, SqlMapper가 된 xml namespace에 value를 작성 -->
 		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
 	</bean>
 </beans>

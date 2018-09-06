@@ -8,6 +8,11 @@
 	if(memberList != null){
 		size = memberList.size();
 	}
+	out.print("size : "+size);
+	out.print("<br>");
+	out.print(memberList.get(0).get("MEM_ID"));//키값은 대문자
+	out.print("<br>");
+	out.print(memberList.get(0).get("MEM_NAME"));//키값은 대문자
 %>
 <!DOCTYPE html>
 <html>
