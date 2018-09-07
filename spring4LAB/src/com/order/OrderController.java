@@ -3,13 +3,16 @@ package com.order;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,16 +33,26 @@ public class OrderController {
 	
 	//패턴작업이나 세션처리 등은 스프링에서 지원할테니, 개발자는 기능구현(logic)만 집중하라는 의도
 	
+	@RequestMapping(value="/order/makeCookie.sp")
+	public String makeCookie(HttpServletResponse res) {
+		//HttpServletResponse response - cookie생성 목적
+		res.addCookie(new Cookie("ctotal", "13"));
+		//spring에서 메소드를 태울때 RequestMapping을 redirect해보자
+		return "redirect:/order/getOrderList.sp";
+	}
+	
 	/*
 	 * Model과 ModelAndView는 scope가 같다.
 	 * (ModelAndView는 스프링 2.5에서 개발했던 프로젝트에서 주로 사용했으므로 알아야함)
 	 */
 	@RequestMapping(value="/order/getOrderList.sp",method=RequestMethod.GET) 
-	public String getOrderList(Model mod	//화면에 대한 것을 리턴
+	public String getOrderList(HttpServletRequest req
+							  ,Model mod	//화면에 대한 것을 리턴
 							  ,ModelMap mMap
 				,@RequestParam Map<String,Object> pMap//Request객체에 자동으로 담아주는 어노테이션 (p.293)
 				 			  ,SessionStatus sStatus
 				,@ModelAttribute("ovo") OrderVO ovo//객체저장값을 저장
+				,@CookieValue(value="13", required=false) Cookie ctoal//쿠키값 읽기
 							  )
 	{
 		logger.info("getOrderList 호출성공");
@@ -50,6 +63,14 @@ public class OrderController {
 		mod.addAttribute("orderList",orderList);//request scope
 		mod.addAttribute("s_orderList",orderList);//session scope (세션생성)
 		mMap.addAttribute("orderListMap",orderList);
+		
+		//쿠키를 읽어보자
+		Cookie cs[] = req.getCookies();
+		if(cs!=null) {
+			for(int i=0;i<cs.length;i++) {//브라우저마다 가지는 JSESSIONID
+				logger.info("ctotal : "+cs[i].getName()+", "+cs[i].getValue());
+			}
+		}
 		
 		//WebContent 하위폴더임
 		return "forward:getOrderList.jsp";

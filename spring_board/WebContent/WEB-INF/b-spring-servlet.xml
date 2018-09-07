@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	">
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- JAVA클래스를 연결시키기 위해 기본 패키지를 지정함 -->
+	<context:component-scan base-package="com.mvc.board"/><!-- xmlns(XMLNameSpace)에 context를 등록해야 사용가능 -->
+	<!-- @Autowired를 사용하지않고 setter객체주입법으로 등록하기 -->
+<!-- 	<bean id="boardController" class="com.mvc.board.BoardController">
+		<property name="bLogic" ref="board-logic"/>
+	</bean> -->
+	<!-- @Autowired사용할때는 property의 name이 지정되어있지만,
+		 setter객체주입법으로 xml에 등록할때는 조정가능하다. (setter메소드가 없으면 name이 에러표시됨)-->
+<!--
+━━━━[ Spring Container안에서  WEB-INF폴더 하위에 보안된 페이지에 로그인할때 접속하기위한 접두어,접미어를 생성하는 화면단해결사 ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/view/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+</beans>

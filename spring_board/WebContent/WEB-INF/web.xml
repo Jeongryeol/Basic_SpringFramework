@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID"
+	version="3.1"
+>
+<!--
+━━━━[ log설정 ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+	<!-- context-param :: 서버 켤 때 한번 만 초기화하면 되는 내용을 초기화해둘 때 사용 -->
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j.properties</param-value><!-- src에 배포하면 됨 -->
+	</context-param>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+		<!-- /WEB-INF/*.xml : 문서량이 다량일때 쓰는 방법-->
+			 /WEB-INF/b-spring-service.xml
+			,/WEB-INF/b-spring-data.xml
+		</param-value>
+	</context-param>
+<!--
+━━━━[ spirng제공 API를 활용하여 한글처리하기(filter) ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern><!-- 모든 요청에 대한 한글처리 진행할 때 사용 -->
+	</filter-mapping>
+<!--
+━━━━[ application-context.xml ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+	아래 리슨너를 추가함으로써 내가 원하는대로 빈 관련 xml문서를 나누어 관리 할 수 있게 됨 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+<!--
+━━━━[ spring-servlet 패턴매핑 ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+	FrontController자리 : DispatcherServlet -->
+	<servlet>
+		<servlet-name>board-spring4</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<!-- init-param :: 업무에 따른 다수의 xml문서를 등록하는 절차-->
+		<init-param><!-- servlet에 대한 요청이 발생할 때 마다 새로 초기화할 때 사용 -->
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/b-spring-servlet.xml
+			</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>board-spring4</servlet-name>
+		<url-pattern>*.spbd</url-pattern>
+	</servlet-mapping>
+</web-app>
