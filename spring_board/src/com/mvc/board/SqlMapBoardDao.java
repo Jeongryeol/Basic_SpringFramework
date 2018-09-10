@@ -28,4 +28,12 @@ public class SqlMapBoardDao {
 		return boardList;
 	}
 	
+	public int totalCount() {
+		logger.info("totalCount 호출 성공");
+		int total = 0;//전체 레코드 수를 담을 변수
+		total = sqlSessionTemplate.selectOne("totalCount",0);
+		logger.info("total:"+total);
+		return total;
+	}
+	
 }

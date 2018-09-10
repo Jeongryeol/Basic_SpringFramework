@@ -1,33 +1,51 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%
 	Integer total = null;
 	total = (Integer)session.getAttribute("total");
 	int ctotal = 0;
-	//out.print("ÀüÃ¼ ·¹ÄÚµå ¼ö:"+total);
-	//ÄíÅ°¿¡ ÀúÀåµÈ °ªÀ» ºÒ·¯¿À±â
+	//out.print("ì „ì²´ ë ˆì½”ë“œ ìˆ˜:"+total);
+	
+	//ì¿ í‚¤ì— ì €ì¥ëœ ê°’ì„ ë¶ˆëŸ¬ì˜¤ê¸°
 	Cookie[] cs = request.getCookies();
 	for(int i=0;i<cs.length;i++){
 		String cName = cs[i].getName();
-		//out.print("ÄíÅ°ÀÌ¸§:"+cName);
+		//out.print("ì¿ í‚¤ì´ë¦„:"+cName);
 		if("ctotal".equals(cName)){
 			ctotal = Integer.parseInt(cs[i].getValue());
 		}
 	}	
-	//out.print("ÀüÃ¼ ·¹ÄÚµå ¼ö[ÄíÅ°·Î]:"+ctotal);
+	//out.print("ì „ì²´ ë ˆì½”ë“œ ìˆ˜[ì¿ í‚¤ë¡œ]:"+ctotal);
 %>    
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
+<!-- 
+	easyUIë¥¼ ì“°ëŠ”ë°, ê²Œì‹œíŒì„ ì¡°íšŒí•˜ëŠ”ë° list.jspë¥¼ ìš”ì²­í•˜ì˜€ë‹¤.
+	getBoardList.spbdë¥¼ í•˜ëŠ” ëŒ€ì‹ ... ì™œ?
+	
+	ì´ìœ ëŠ”, easyUIì˜ datagridì˜ urlì†ì„±ìœ¼ë¡œ ìŠ¤í”„ë§ì„ ê²½ìœ í•˜ê²Œ í•˜ì˜€ë‹¤.
+	(url:getBoardList.spbd)
+	
+	UISolution ì¤‘ UIë¥¼ ì§€ì›í•˜ëŠ” ì»´í¬ë„ŒíŠ¸ ì¤‘, ì•„ë˜ ë‚´ìš©ì„ ê´€ì‹¬ìˆê²Œ ë³´ê¸¸ ë°”ë€ë‹¤.
+	datagrid ( í…Œì´ë¸”ê³¼ jsonì„ ì§€ì›í•˜ëŠ” UI )
+	dialog ( íŒì—… )
+	panel ( íŒ¨ë„ )
+	combo ( DBì—°ë™ì„ ì§€ì›í•˜ëŠ” UI ) : selectì€ DBì—°ë™ì§€ì›í•˜ì§€ ì•ŠìŒ
+	
+	í•˜ë‚˜ë”,
+	Listë‚˜ Mapì„ jsoní¬ë§·ìœ¼ë¡œ, í˜¹ì€ xmlí¬ë§·ìœ¼ë¡œ ì²˜ë¦¬í•  ìˆ˜ ìˆì–´ì•¼ í•œë‹¤.
+	
+	list.jsp -> datagrid(url:getBoardList.spbd) -> ìŠ¤í”„ë§ê²½ìœ  -> jsonBoardList.jsp(jsoní¬ë§·ë³€í™˜íŒŒì¼)
+ -->
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-<title>±Û¸ñ·Ï</title>
-<!-- °øÅë ÄÚµå includeÃ³¸® -->
+<meta charset="UTF-8">
+<title>ê¸€ëª©ë¡ [ Webcontent/springboard/list.jsp : redirect|forward ]</title>
 <%@ include file="../../../include/commonUI.jsp" %>
 <script type="text/javascript">
 	var g_total=0;
-	//´ñ±Û¾²±â ÇÒ ¶§
+	//ëŒ“ê¸€ì“°ê¸° í•  ë•Œ
 	function repleForm(pb_no, pb_group, pb_pos, pb_step){
-		alert("repleFormÈ£Ãâ ¼º°ø"+pb_no+","+pb_group+","+pb_pos+","+pb_step);
+		alert("repleFormí˜¸ì¶œ ì„±ê³µ"+pb_no+","+pb_group+","+pb_pos+","+pb_step);
 		$("#b_no").val(pb_no);
 		$("#b_group").val(pb_group);
 		$("#b_pos").val(pb_pos);
@@ -35,35 +53,35 @@
 		$("#dl_read").dialog('close');
 		$("#dl_boardInsert").dialog('open');
 	}
-	//±Û ¼öÁ¤ÇÒ ¶§ - DB¸¦ ÅÂ¿ö¾ß ÇÔ.
+	//ê¸€ ìˆ˜ì •í•  ë•Œ - DBë¥¼ íƒœì›Œì•¼ í•¨.
 	function updateForm(pb_no){
-		//alert("updateFormÈ£Ãâ ¼º°ø");
+		//alert("updateFormí˜¸ì¶œ ì„±ê³µ");
 		$("#dl_read").dialog('close');
         $("#dl_update").dialog({
-    		href:'./mvcBoard.bd?gubun=getBoardList&one=update&b_no='+pb_no,
+    		href:'./mvcBoard.spbd?gubun=getBoardList&one=update&b_no='+pb_no,
         });
 		$("#dl_update").dialog('open');
 	}
-	//±Û¼öÁ¤  Ã³¸®ÇÏ±â
+	//ê¸€ìˆ˜ì •  ì²˜ë¦¬í•˜ê¸°
 	function updateAction(){
 		$("#f_update").attr("method","post");
-		$("#f_update").attr("action","./mvcBoard.bd");
-		$("#f_update").submit();//ÀÌ ¶§ ¼­¹ö·Î Àü¼ÛÀÌ ÀÏ¾î³²
+		$("#f_update").attr("action","./mvcBoard.spbd");
+		$("#f_update").submit();//ì´ ë•Œ ì„œë²„ë¡œ ì „ì†¡ì´ ì¼ì–´ë‚¨
 	}
-	//±Û»èÁ¦ÇÒ ¶§
+	//ê¸€ì‚­ì œí•  ë•Œ
 	function deleteForm(){
-		alert("deleteFormÈ£Ãâ ¼º°ø");
+		alert("deleteFormí˜¸ì¶œ ì„±ê³µ");
 	}
-	//±Û»ó¼¼º¸±â¿¡¼­ ±Û¸ñ·Ï µ¹¾Æ°¥¶§
+	//ê¸€ìƒì„¸ë³´ê¸°ì—ì„œ ê¸€ëª©ë¡ ëŒì•„ê°ˆë•Œ
 	function dg_listReload(){
-		//alert("dg_listReloadÈ£Ãâ ¼º°ø");
+		//alert("dg_listReloadí˜¸ì¶œ ì„±ê³µ");
 		$("#dl_read").dialog('close');
 		$("#dg_list").datagrid({
-		    url:'./mvcBoard.bd?gubun=getBoardList'	
+		    url:'./mvcBoard.spbd?gubun=getBoardList'	
 		});
 	}
 	function bSearch(){
-	//Áö±İÀÇ °æ¿ì ÀÌ¹Ì DOM±¸¼ºÀÌ ¿Ï·áµÇ¾úÀ» ¶§ ¾×¼ÇÀ» ÀÌ¹Ì Åº »óÅÂ°¡ µÇ°í ±× °á°ú´Â jsonBoardList.jsp·Î ÀÀ´äÀÌ ³ª¿Â´Ù.
+	//ì§€ê¸ˆì˜ ê²½ìš° ì´ë¯¸ DOMêµ¬ì„±ì´ ì™„ë£Œë˜ì—ˆì„ ë•Œ ì•¡ì…˜ì„ ì´ë¯¸ íƒ„ ìƒíƒœê°€ ë˜ê³  ê·¸ ê²°ê³¼ëŠ” jsonBoardList.jspë¡œ ì‘ë‹µì´ ë‚˜ì˜¨ë‹¤.
 /* 		$("#f_search").attr("method","get");
 		$("#f_search").attr("action","./mvcBoard.bd?gubun=getBoardList");
 		$("#f_search").submit(); */
@@ -71,44 +89,45 @@
 		    url:'./mvcBoard.bd?gubun=getBoardList&cb_type='+$("#cb_type").val()+'&sb_keyword='+$("#sb_keyword").val()		
 		});
 	}
-	//±Û¾²±â È­¸é ¶ç¿ì±â
+	//ê¸€ì“°ê¸° í™”ë©´ ë„ìš°ê¸°
 	function boardInsForm(){
 		$("#dl_boardInsert").dialog('open');
 	}
-	//±Û¾²±â µî·Ï Ã³¸®ÇÏ±â
+	//ê¸€ì“°ê¸° ë“±ë¡ ì²˜ë¦¬í•˜ê¸°
 	function boardInsert(){
 		alert("gubun:"+$("#gubun").val());
 		$("#f_insert").attr("method","post");
-		$("#f_insert").attr("action","./mvcBoard.bd");
-		$("#f_insert").submit();//ÀÌ ¶§ ¼­¹ö·Î Àü¼ÛÀÌ ÀÏ¾î³²
+		$("#f_insert").attr("action","./mvcBoard.spbd");
+		$("#f_insert").submit();//ì´ ë•Œ ì„œë²„ë¡œ ì „ì†¡ì´ ì¼ì–´ë‚¨
 	}
-	//ÆäÀÌÁö ³×ÀÌ¼Ç¿¡¼­ ÆäÀÌÁö ÀÌµ¿ ¹öÆ°À» Å¬¸¯ÇßÀ» ¶§ ½ÇÁ¦ ÆäÀÌÁö ÀÌµ¿Ã³¸® ±¸Çö
+	//í˜ì´ì§€ ë„¤ì´ì…˜ì—ì„œ í˜ì´ì§€ ì´ë™ ë²„íŠ¼ì„ í´ë¦­í–ˆì„ ë•Œ ì‹¤ì œ í˜ì´ì§€ ì´ë™ì²˜ë¦¬ êµ¬í˜„
 	function pageMove(pageNumber, pageSize){
 		$("#dg_list").datagrid({
-		    url:'./mvcBoard.bd?gubun=getBoardList&page='+pageNumber+'&pageSize='+pageSize
+		    url:'./mvcBoard.spbd?gubun=getBoardList&page='+pageNumber+'&pageSize='+pageSize
 		});    		
 	}
 </script>
 </head>
 <body>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#dg_list").datagrid({
-		    url:'./mvcBoard.bd?gubun=getBoardList&page=1&pageSize=5',
+		    url:'./getBoardList.spbd?page=1&pageSize=5',
 		    columns:[[
-		        {field:'B_NO',title:'±Û¹øÈ£',width:100, align:'center'},
-		        {field:'B_TITLE',title:'Á¦¸ñ',width:400, align:'center'},
-		        {field:'B_NAME',title:'ÀÌ¸§',width:100, align:'center'},
-		        {field:'B_FILE',title:'Ã·ºÎÆÄÀÏ',width:150, align:'center'},
-		        {field:'B_HIT',title:'Á¶È¸¼ö',width:100, align:'center'},
+		        {field:'B_NO',title:'ê¸€ë²ˆí˜¸',width:100, align:'center'},
+		        {field:'B_TITLE',title:'ì œëª©',width:400, align:'center'},
+		        {field:'B_NAME',title:'ì´ë¦„',width:100, align:'center'},
+		        {field:'B_FILE',title:'ì²¨ë¶€íŒŒì¼',width:150, align:'center'},
+		        {field:'B_HIT',title:'ì¡°íšŒìˆ˜',width:100, align:'center'},
 		    ]],
-		/* µ¥ÀÌÅÍ Á¶È¸°¡ ¿Ï·áµÇ¾úÀ» ¶§ */
+		/* ë°ì´í„° ì¡°íšŒê°€ ì™„ë£Œë˜ì—ˆì„ ë•Œ */
 		    onDblClickRow: function(index,row){
-		    	//alert("±Û¹øÈ£ : "+row.B_NO);
-		    	//´ÙÀÌ¾ó ·Î±× Ã¢À» ¶ç¿öºÁ¿ä - ÄÚµå Ãß°¡ - ½ºÅ©¸³Æ®·Î Ã³¸®
-		    	//list.jspÆäÀÌÁö ³»¿¡ ´ÙÀÌ¾ó·Î±× ÆäÀÌÁö ±¸ÇöÀÌ °¡´ÉÇÏ´Ï±î - ÆäÀÌÁö°¡ ºĞ¸®µÇ¾î ÀÖÁö ¾ÊÀº »óÅÂ
+		    	//alert("ê¸€ë²ˆí˜¸ : "+row.B_NO);
+		    	//ë‹¤ì´ì–¼ ë¡œê·¸ ì°½ì„ ë„ì›Œë´ìš” - ì½”ë“œ ì¶”ê°€ - ìŠ¤í¬ë¦½íŠ¸ë¡œ ì²˜ë¦¬
+		    	//list.jspí˜ì´ì§€ ë‚´ì— ë‹¤ì´ì–¼ë¡œê·¸ í˜ì´ì§€ êµ¬í˜„ì´ ê°€ëŠ¥í•˜ë‹ˆê¹Œ - í˜ì´ì§€ê°€ ë¶„ë¦¬ë˜ì–´ ìˆì§€ ì•Šì€ ìƒíƒœ
 		        $("#dl_read").dialog({
-		    		href:'./mvcBoard.bd?gubun=getBoardList&one=one&b_no='+row.B_NO,
+		    		href:'./mvcBoard.spbd?gubun=getBoardList&one=one&b_no='+row.B_NO,
 		    	    onLoad:function(){
 		    	    	//alert("success!!!");
 		    	    }
@@ -120,7 +139,7 @@
 		    total:<%=ctotal%>
 		   ,pageSize:5
 		   ,pageList: [5,10,15,20]
-		   ,onSelectPage:function(pageNumber, pageSize){//pageNumber:ÇöÀç ³»°¡ ¹Ù¶óº¸´Â ÆäÀÌÁö, pageSize:ÇÑÆäÀÌÁö¿¡ »Ñ¸± ·Î¿ì¼ö
+		   ,onSelectPage:function(pageNumber, pageSize){//pageNumber:í˜„ì¬ ë‚´ê°€ ë°”ë¼ë³´ëŠ” í˜ì´ì§€, pageSize:í•œí˜ì´ì§€ì— ë¿Œë¦´ ë¡œìš°ìˆ˜
 			   //alert("pageNumber:"+pageNumber+"\n pageSize:"+ pageSize);
 			   pageMove(pageNumber, pageSize);
 		   }
@@ -128,33 +147,33 @@
 	});
 </script>
 <table align="center" width="900px">
-<!-- °Ë»ö Á¶°Ç È­¸é Ãß°¡ÇÏ±â -->
+<!-- ê²€ìƒ‰ ì¡°ê±´ í™”ë©´ ì¶”ê°€í•˜ê¸° -->
 <form id="f_search">
 	<tr>
 		<td>
 		<select id="cb_type" class="easyui-combobox" name="cb_type" style="width:200px;">
-		    <option value="b_title">Á¦¸ñ</option>
-		    <option value="b_content">³»¿ë</option>
-		    <option value="b_name">ÀÛ¼ºÀÚ</option>
+		    <option value="b_title">ì œëª©</option>
+		    <option value="b_content">ë‚´ìš©</option>
+		    <option value="b_name">ì‘ì„±ì</option>
 		</select>
 		<input id="sb_keyword" name="sb_keyword" class="easyui-searchbox" style="width:300px"
         data-options="searcher:bSearch,prompt:'Please Input Value'"></input>
 		</td>
 	</tr>
 </form>	
-<!-- ±Û¾²±â ¹öÆ° Ãß°¡ -->	
+<!-- ê¸€ì“°ê¸° ë²„íŠ¼ ì¶”ê°€ -->	
 	<tr>
 		<td align="left">
-        <a id="btn_write" href="javascript:boardInsForm()" class="easyui-linkbutton">±Û¾²±â</a>
+        <a id="btn_write" href="javascript:boardInsForm()" class="easyui-linkbutton">ê¸€ì“°ê¸°</a>
 		</td>
 	</tr>	
-<!-- ¸ñ·ÏÃ³¸® È­¸é Ãß°¡ÇÏ±â(datagrid) -->
+<!-- ëª©ë¡ì²˜ë¦¬ í™”ë©´ ì¶”ê°€í•˜ê¸°(datagrid) -->
 	<tr>
 		<td>
 		<table id="dg_list"></table>
 		</td>
 	</tr>	
-<!-- ÆäÀÌÁö ³×ÀÌ¼Ç Ã³¸®(pagination) -->
+<!-- í˜ì´ì§€ ë„¤ì´ì…˜ ì²˜ë¦¬(pagination) -->
 	<tr>
 		<td>
 		<div id="pg_board" style="background:#efefef;border:1px solid #ccc;">
@@ -162,16 +181,16 @@
 		</td>
 	</tr>	
 </table>
-<!-- ±Û»ó¼¼ º¸±â ´ÙÀÌ¾ó·Î±× Ã³¸® ½ÃÀÛ[read.jsp] -->
-<div id="dl_read" class="easyui-dialog" title="±Û»ó¼¼º¸±â" style="width:600px;height:350px;"
+<!-- ê¸€ìƒì„¸ ë³´ê¸° ë‹¤ì´ì–¼ë¡œê·¸ ì²˜ë¦¬ ì‹œì‘[read.jsp] -->
+<div id="dl_read" class="easyui-dialog" title="ê¸€ìƒì„¸ë³´ê¸°" style="width:600px;height:350px;"
      data-options="resizable:true,modal:true,closed:true">
 </div> 
-<!-- ±Û»ó¼¼ º¸±â ´ÙÀÌ¾ó·Î±× Ã³¸®  ³¡   -->
+<!-- ê¸€ìƒì„¸ ë³´ê¸° ë‹¤ì´ì–¼ë¡œê·¸ ì²˜ë¦¬  ë   -->
 <!-- 
-±Û¾²±â ´ÙÀÌ¾ó ·Î±× Ã³¸®(writeForm.jspÈ­¸é Ã³¸®)
-Ã³À½¿£ ´İÈù »óÅÂ·Î ÀÖ´Ù°¡ ±Û¾²±â ¹öÆ°À» Å¬¸¯ÇÏ¸é Ã¢À» ¶ç¿ò.
+ê¸€ì“°ê¸° ë‹¤ì´ì–¼ ë¡œê·¸ ì²˜ë¦¬(writeForm.jspí™”ë©´ ì²˜ë¦¬)
+ì²˜ìŒì—” ë‹«íŒ ìƒíƒœë¡œ ìˆë‹¤ê°€ ê¸€ì“°ê¸° ë²„íŠ¼ì„ í´ë¦­í•˜ë©´ ì°½ì„ ë„ì›€.
  -->
-<div id="dl_boardInsert" class="easyui-dialog" title="±Û¾²±â" style="width:600px;height:350px;"
+<div id="dl_boardInsert" class="easyui-dialog" title="ê¸€ì“°ê¸°" style="width:600px;height:350px;"
      data-options="resizable:true,modal:true,closed:true">
  	    <form id="f_insert" method="post" enctype="multipart/form-data">
 <!-- 	    <form id="f_insert"> -->
@@ -182,23 +201,23 @@
 	    <input type="hidden" id="b_step" name="b_step" value="0">
     <table align="center">
 	    	<tr>
-	    	<td>Á¦¸ñ</td>
+	    	<td>ì œëª©</td>
 	    	<td><input id="b_title" name="b_title" data-options="width:'250px'" class="easyui-textbox"></td>
 	    	</tr>
 	    	<tr>
-	    	<td>ÀÛ¼ºÀÚ</td>
+	    	<td>ì‘ì„±ì</td>
 	    	<td><input id="b_name" name="b_name" class="easyui-textbox"></td>
 	    	</tr>
 	    	<tr>
-	    	<td>³»¿ë</td>
+	    	<td>ë‚´ìš©</td>
 	    	<td><input id="b_content" name="b_content" data-options="multiline:'true', width:'350px', height:'90px'" class="easyui-textbox"></td>
 	    	</tr>
 	    	<tr>
-	    	<td>ºñ¹Ğ¹øÈ£</td>
+	    	<td>ë¹„ë°€ë²ˆí˜¸</td>
 	    	<td><input id="b_pwd" name="b_pwd" class="easyui-passwordbox"></td>
 	    	</tr>
 	    	<tr>
-	    	<td>Ã·ºÎÆÄÀÏ</td>
+	    	<td>ì²¨ë¶€íŒŒì¼</td>
 	    	<td><input id="b_file" name="b_file" class="easyui-filebox" style="width:350px"></td>
 	    	</tr>
 	    		    	
@@ -207,30 +226,22 @@
 	    <table align="center">
 	    	<tr>
 	    	<td>
-				<a href="javascript:boardInsert()" class="easyui-linkbutton">ÀúÀå</a>
-				<a href="javascript:$('#dl_boardInsert').dialog('close');" class="easyui-linkbutton">´İ±â</a>
+				<a href="javascript:boardInsert()" class="easyui-linkbutton">ì €ì¥</a>
+				<a href="javascript:$('#dl_boardInsert').dialog('close');" class="easyui-linkbutton">ë‹«ê¸°</a>
 	    	</td>
 	    	</tr>
 	    </table>
 </div> 
 <!-- 
-±Û¾²±â ´ÙÀÌ¾ó ·Î±× Ã³¸®(writeForm.jspÈ­¸é Ã³¸®)
-Ã³À½¿£ ´İÈù »óÅÂ·Î ÀÖ´Ù°¡ ±Û¾²±â ¹öÆ°À» Å¬¸¯ÇÏ¸é Ã¢À» ¶ç¿ò.
+ê¸€ì“°ê¸° ë‹¤ì´ì–¼ ë¡œê·¸ ì²˜ë¦¬(writeForm.jspí™”ë©´ ì²˜ë¦¬)
+ì²˜ìŒì—” ë‹«íŒ ìƒíƒœë¡œ ìˆë‹¤ê°€ ê¸€ì“°ê¸° ë²„íŠ¼ì„ í´ë¦­í•˜ë©´ ì°½ì„ ë„ì›€.
  -->
- <!--=================================== ±Û¼öÁ¤ÇÏ±â È­¸é ½ÃÀÛ[updateForm.jsp] =================================-->
- <div id="dl_update" class="easyui-dialog" title="±Û¼öÁ¤" style="width:600px;height:350px;"
+ <!--=================================== ê¸€ìˆ˜ì •í•˜ê¸° í™”ë©´ ì‹œì‘[updateForm.jsp] =================================-->
+ <div id="dl_update" class="easyui-dialog" title="ê¸€ìˆ˜ì •" style="width:600px;height:350px;"
      data-options="resizable:true,modal:true,closed:true">
 </div> 
- <!--=================================== ±Û¼öÁ¤ÇÏ±â È­¸é  ³¡   =================================-->
+ <!--=================================== ê¸€ìˆ˜ì •í•˜ê¸° í™”ë©´  ë   =================================-->
+ 
+ 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
