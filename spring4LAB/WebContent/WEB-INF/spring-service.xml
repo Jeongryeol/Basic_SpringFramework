@@ -5,20 +5,25 @@
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
-	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	">
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- 한글처리-->
 	<bean id="message-source" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename">
 			<value>messages_ko_KR</value>
 		</property>
 	</bean>
-<!-- Controller에서 setter로 주입한 Logic을 매핑 /spring이 이 클래스가 있는지 체크함 (없으면 ClassNotFoundException 발생)-->
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- Controller에서 setter로 주입한 Logic을 매핑 /spring이 이 클래스가 있는지 체크함 (없으면 ClassNotFoundException 발생)-->
 	<bean id="board-logic" class="com.compare_pojo.BoardLogic">
 		<property name="sqlBoardDao" ref="sql-board-dao"/>
 	</bean>
 	<bean id="member-logic" class="com.compare_pojo.MemberLogic">
 		<property name="sqlMemberDao" ref="sql-member-dao"/>
 	</bean>
-<!-- XML DI 트랜잭션처리 -->
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- XML DI 트랜잭션처리 -->
 	<aop:config>
 		<aop:pointcut expression="execution(* com.compare_pojo.*Logic.*(..))" id="point-cut"/>
 		<aop:advisor advice-ref="tx-advice" pointcut-ref="point-cut"/>
@@ -30,4 +35,5 @@
 			<tx:method name="do*"/>
 		</tx:attributes>
 	</tx:advice> 
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 </beans>
