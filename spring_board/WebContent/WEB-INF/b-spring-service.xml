@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	">
 <!--
 ━━━━[ spirng제공 API를 활용하여 한글처리하기(filter) ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 	<bean id="message-source" class="org.springframework.context.support.ResourceBundleMessageSource">
@@ -9,8 +14,18 @@
 			<value>messages_ko_KR</value>
 		</property>
 	</bean>
-<!--
-━━━━[ Controller에 Logic을 주입하기 ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
- 	<bean id="board-logic" class="com.mvc.board.BoardLogic">
-	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- XML DI 트랜잭션처리 -->
+	<aop:config>
+		<aop:pointcut id="point-cut" expression="execution(* com.mvc.board.*Logic.*(..))"/>
+		<aop:advisor advice-ref="tx-advice" pointcut-ref="point-cut"/>
+	</aop:config>
+	<tx:advice id="tx-advice" transaction-manager="transactionManager"><!-- data에 작성됨 -->
+		<tx:attributes>
+			<!-- 메소드 이름 앞에  cud 가 뭍으면 묶음처리 (한꺼번에 커밋) / 아니면 개별로 커밋처리(자바코딩없이 자동으로 일괄처리) -->
+			<tx:method name="cud*"/>
+			<tx:method name="do*"/>
+		</tx:attributes>
+	</tx:advice> 
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 </beans>

@@ -7,8 +7,8 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MemberLogic {
-	Logger logger = Logger.getLogger(MemberLogic.class);
+public class MvcMemberLogic {
+	Logger logger = Logger.getLogger(MvcMemberLogic.class);
 	
 	public List<Map<String,Object>> getMemberList(Map<String,Object> pMap){
 		logger.info("MemberLogic - getMemberList");

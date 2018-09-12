@@ -1,19 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
 	">
 <!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- 트랜잭션처리를 어노테이션으로 할때 삽입해야하는 코드 -->
+	<tx:annotation-driven/>
+	
+	<!-- <mybatis:scan base-package="com.mybatis.mapper"/> -->
+	<!-- xmlns(XMLNameSpace)에 context를 등록해야 사용가능 -->
+	
 	<!-- JAVA클래스를 연결시키기 위해 기본 패키지를 지정함 -->
-	<context:component-scan base-package="com.mvc.board"/><!-- xmlns(XMLNameSpace)에 context를 등록해야 사용가능 -->
-	<!-- @Autowired를 사용하지않고 setter객체주입법으로 등록하기 -->
-<!-- 	<bean id="boardController" class="com.mvc.board.BoardController">
+	<context:component-scan base-package="com.mvc.board"/>
+<!--@Autowired를 사용하지않고 setter객체주입법으로 등록하기
+	@Autowired사용할때는 property의 name이 지정되어있지만,
+	setter객체주입법으로 xml에 등록할때는 조정가능하다. (setter메소드가 없으면 name이 에러표시됨)-->
+<!--
+ 	<bean id="boardController" class="com.mvc.board.BoardController">
 		<property name="bLogic" ref="board-logic"/>
 	</bean> -->
-	<!-- @Autowired사용할때는 property의 name이 지정되어있지만,
-		 setter객체주입법으로 xml에 등록할때는 조정가능하다. (setter메소드가 없으면 name이 에러표시됨)-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 10MB이하 / 대용량 첨부파일은 WAS에서 관리하지 않음. -->
+		<property name="maxUploadSize" value="10485760"/>
+		<!-- 첨부파일이 있을 경우 반드시 POST처리 함  -->
+	</bean>
 <!--
 ━━━━[ Spring Container안에서  WEB-INF폴더 하위에 보안된 페이지에 로그인할때 접속하기위한 접두어,접미어를 생성하는 화면단해결사 ]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
