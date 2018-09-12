@@ -2,8 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-<!--
-	[2] JDBC로 설정하는 기본방법 : 개발자의 의도대로 전개할 수 있는 방식 -->
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+<!--[2] JDBC로 설정하는 기본방법 : 개발자의 의도대로 전개할 수 있는 방식 -->
 	<bean id="data-source-target" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 	<!-- setter메소드로 객체주입이 일어나므로 name을 함부로 수정하면 위험하다 -->
 		<property name="driverClassName">
@@ -24,21 +24,21 @@
 	<!-- Mabatis Layer config :: 이종간의 객체 주입하는 코드 -->
 	<!-- DB Connection 만들기 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<!-- mapper를 알고있는 xml문서를 참조함. 왜?xml(mybatis-config.xml)에서 xml(member.xml)을 참조해야함 -->
-		<property name="configLocation" value="WEB-INF/mybatis-config.xml"/>
-		<!-- 커넥션을 위한 DB접속정보 -->
-		<property name="dataSource" ref="data-source-target"/>
+		<property name="configLocation" value="WEB-INF/mybatis-config.xml"/><!-- mapper를 알고있는 xml문서를 참조함. 왜?xml(mybatis-config.xml)에서 xml(member.xml)을 참조해야함 -->
+		<property name="dataSource" ref="data-source-target"/><!-- 커넥션을 위한 DB접속정보 -->
 	</bean>
-<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 	<!-- SqlSession 만들기 -->
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
-		<!-- 생성자 주입법 -->
-		<constructor-arg index="0" ref="sqlSessionFactory"/>
+		<constructor-arg index="0" ref="sqlSessionFactory"/><!-- 생성자 주입법 -->
 	</bean>
-<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 	<!-- Logic에서 사용할 Dao클래스에 SqlSession을 주입함 -->
 	<bean id="sql-map-board-dao" class="com.mvc.board.SqlMapBoardDao">
 		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
 	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- Logic layer TRANSACTION CONFIGURATION :: service단에서 찾아옴-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="data-source-target"/><!-- 트랜잭션처리로 개입하려하는 DB계정정보를 참조 -->
+	</bean>	
 <!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 </beans>
