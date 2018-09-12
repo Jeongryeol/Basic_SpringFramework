@@ -73,13 +73,13 @@
 	 	<if test='b_no!=null'>
 	     		AND a.b_no = #{b_no}
 	 	</if>		
-	 	<if test='column != null and column.equals("b_title")'>
+	 	<if test='cb_type != null and cb_type.equals("b_title")'>
 	     		AND a.b_title LIKE '%'||#{sb_keyword}||'%'
 	 	</if>		
-	 	<if test='column != null and column.equals("b_content")'>
+	 	<if test='cb_type != null and cb_type.equals("b_content")'>
 	     		AND a.b_content LIKE '%'||#{sb_keyword}||'%'
 	 	</if>		
-	 	<if test='column != null and column.equals("b_name")'>
+	 	<if test='cb_type != null and cb_type.equals("b_name")'>
 	     		AND a.b_name LIKE '%'||#{sb_keyword}||'%'
 	 	</if>	
 	 	<if test='start>0'>

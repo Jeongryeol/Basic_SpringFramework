@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.util.HangulConversion;
+
 //Controller계층에서 Autowired가 아닌 setter객체주입법으로 xml에서 주입받을때 의 예제
 @Service
 public class BoardLogic {
@@ -55,6 +57,10 @@ public class BoardLogic {
 		boardList.get(0).put("total", total);
 		return boardList;
 	}
-
 	
+	//Transaction처리가 되도록 정규화된 내용으로 cud를 적용함.
+	public List<Map<String,Object>> cudBoard(BoardMasterVO bmVO
+											,BoardSubVO bsVO){
+		return null;
+	}
 }

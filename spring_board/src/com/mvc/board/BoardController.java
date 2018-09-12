@@ -1,5 +1,8 @@
 package com.mvc.board;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -10,8 +13,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.util.HangulConversion;
 
 @Controller
 @RequestMapping("/spbd")//모든 매핑에 선행매핑 추가하기
@@ -39,6 +46,14 @@ public class BoardController {
 		logger.info("controller-getBoardList");
 		logger.info("pMap = "+pMap);
 		List<Map<String,Object>> boardList = null;
+		
+		//검색 요청이 전체 조회인 경우 조건 검색인 경우 나누어진다.
+/*		//POST방식일때 한글처리함
+  		if(pMap.containsKey("cb_type")) {
+			pMap.put("sb_keyword"
+					,HangulConversion.toKor(pMap.get("sb_keyword").toString()));//한글처리
+		}*/
+		
 		boardList = boardLogic.getBoardList(pMap);
 		
 		//쿠키세팅하기
@@ -57,6 +72,35 @@ public class BoardController {
 	@RequestMapping("writeForm.spbd")
 	public String writeForm(){
 		return "redirect:writeForm.jsp";
+	}
+	
+	//스프링으로 첨부파일 구현하기
+	@RequestMapping("boardInsert.spbd")
+	public String boardInsert(@RequestParam("bfile") MultipartFile bfile
+							 ,@ModelAttribute BoardMasterVO bmVO
+							 ,@ModelAttribute BoardSubVO bsVO )
+	{
+		//────────────────[ 파일첨부 시작 ]─────────────────
+		String fileName = HangulConversion.toUTF(bfile.getOriginalFilename());//파일첨부를 위해서 한글처리가 필요함
+		String path = "E:\\JLGit\\Basic_SpringFramework\\spring_board\\WebContent\\pbs\\";
+		if(bfile!=null) {
+			File file = new File(path+fileName);
+			try {
+				byte[] bytes = bfile.getBytes();
+				BufferedOutputStream bos			//단독구현이 불가능한 필터클래스
+					= new BufferedOutputStream(		//필터스트림
+						new FileOutputStream(file));//안쪽에 있는게 실제생성스트림
+				bos.write(bytes);//쓰기처리
+				bos.close();
+				long size = file.length();//파일크기 처리
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		//────────────────[ 파일첨부 끝 ]─────────────────
+		
+		return "redirect:getBoardList.spbd";
 	}
 }
 

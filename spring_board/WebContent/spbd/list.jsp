@@ -79,13 +79,15 @@
 		    url:'./mvcBoard.spbd?gubun=getBoardList'	
 		});
 	}
+	//조건검색
 	function bSearch(){
 	//지금의 경우 이미 DOM구성이 완료되었을 때 액션을 이미 탄 상태가 되고 그 결과는 jsonBoardList.jsp로 응답이 나온다.
 /* 		$("#f_search").attr("method","get");
 		$("#f_search").attr("action","./mvcBoard.bd?gubun=getBoardList");
 		$("#f_search").submit(); */
 		$("#dg_list").datagrid({
-		    url:'./mvcBoard.bd?gubun=getBoardList&cb_type='+$("#cb_type").val()+'&sb_keyword='+$("#sb_keyword").val()		
+		    url:'./getBoardList.spbd?cb_type='+$("#cb_type").val()
+		    					  +'&sb_keyword='+$("#sb_keyword").val()		
 		});
 	}
 	//글쓰기 화면 띄우기
