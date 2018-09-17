@@ -144,5 +144,4 @@ public class MvcBoardController {
 		mod.addAttribute("getBoardList",boardList);
 		return "forward:read.jsp";
 	}
-	
 }

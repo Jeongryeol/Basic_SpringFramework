@@ -42,7 +42,6 @@
 <script type="text/javascript">
 	var g_total = 0;
 	var g_no = 0;//클릭할때 매번 반영될 셀 위치정보를 담을 전역변수...
-	
 	//댓글쓰기 할 때
 	function repleForm(pb_no, pb_group, pb_pos, pb_step) {
 		alert("repleForm호출 성공" + pb_no + "," + pb_group + "," + pb_pos + "," + pb_step);
@@ -180,7 +179,7 @@
 		});
 	});
 </script>
-	<table align="center" width="909px">
+	<table align="center" width="900px">
 		<!-- 검색 조건 화면 추가하기 -->
 		<form id="f_search">
 			<tr>
