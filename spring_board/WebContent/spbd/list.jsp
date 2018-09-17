@@ -41,6 +41,7 @@
 <%@ include file="../include/commonUI.jsp"%>
 <script type="text/javascript">
 	var g_total = 0;
+	var g_no = 0;//클릭할때 매번 반영될 셀 위치정보를 담을 전역변수...
 	//댓글쓰기 할 때
 	function repleForm(pb_no, pb_group, pb_pos, pb_step) {
 		alert("repleForm호출 성공" + pb_no + "," + pb_group + "," + pb_pos + "," + pb_step);
@@ -62,7 +63,7 @@
 	}
 	//글수정  처리하기
 	function updateAction() {
-		//$("#f_update").attr("method", "post");
+		$("#f_update").attr("method", "post");
 		$("#f_update").attr("action", "./mvcBoard.spbd");
 		$("#f_update").submit(); //이 때 서버로 전송이 일어남
 	}
@@ -125,26 +126,48 @@
 		        {field:'b_hit',title:'조회수',width:100, align:'center'}
 		    ]], */
  		    columns:[[//Map으로 받았을때
-		        {field:'B_NO',title:'글번호',width:100, align:'center'},
-		        {field:'B_TITLE',title:'제목',width:400, align:'center'},
-		        {field:'B_NAME',title:'이름',width:100, align:'center'},
-		        {field:'B_FILE',title:'첨부파일',width:150, align:'center'},
-		        {field:'B_HIT',title:'조회수',width:100, align:'center'}
+		        {field:'B_NO',title:'글번호',width:50, align:'center'},
+		        {field:'B_TITLE',title:'제목',width:300, align:'center'},
+		        {field:'B_NAME',title:'이름',width:70, align:'center'},
+		        {field:'B_FILE',title:'첨부파일',width:350, align:'center'},
+		        {field:'B_SIZE',title:'크기',width:80, align:'center'},
+		        {field:'B_HIT',title:'조회수',width:50, align:'center'}
 		    ]],
+		  	//하나만 클릭가능
+		    singleSelect:true,
+		    
+		    
 		/* 데이터 조회가 완료되었을 때 */
-		    onDblClickRow: function(index,row){
-		    	//alert("글번호 : "+row.B_NO);
-		    	//다이얼 로그 창을 띄워봐요 - 코드 추가 - 스크립트로 처리
-		    	//list.jsp페이지 내에 다이얼로그 페이지 구현이 가능하니까 - 페이지가 분리되어 있지 않은 상태
-		        $("#dl_read").dialog({
-		    		href:'./mvcBoard.spbd?gubun=getBoardList&one=one&b_no='+row.B_NO,
-		    	    onLoad:function(){
-		    	    	//alert("success!!!");
-		    	    }
-		        });
-				$("#dl_read").dialog('open');
+			//상세보기 처리
+			
+			//클릭했을때 셀 값 읽어오기
+		    onSelect: function(index,row){
+		    	var row = $("#dg_list").datagrid("getSelected");
+				g_no = row.B_NO;
+			},
+
+			//더블클릭에 대한 액션 정의하기
+			onDblClickCell: function(index,field,value){
+				//타이틀을 클릭했을 때
+				if("B_TITLE"==field){
+					$("#dl_read").dialog({
+			    		href:'/getBoardDetail.spbd?b_no='+g_no,
+			    	    onLoad:function(){
+			    	    	//alert("success!!!");
+			    	    }
+			        });
+					$("#dl_read").dialog('open');
+					g_no = 0;//성공하고서 다이얼로그창을 띄우고 난 뒤 다시 전역변수를 0으로 초기화
+				}
+				
+				//파일을 클릭했을 때
+				if("B_FILE"==field){
+					location.href='./downLoad.jsp?b_file='+value;
+				}
 			}
 		});
+		
+		
 		$('#pg_board').pagination({
 		    total:<%=ctotal%>
 		   ,pageSize:5

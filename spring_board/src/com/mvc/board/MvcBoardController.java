@@ -86,6 +86,13 @@ public class MvcBoardController {
 							  ) {
 		logger.info("bfile.getOriginalFilename() : "+bfile.getOriginalFilename());
 		
+		/*
+		 * [ 첨부파일 처리시 반드시 POST방식으로 전송해야 한다. ]
+		 * POST방식 한글처리	: HangulConversion.toKor()
+		 * get방식 한글처리 : server.xml -> URIEncoding="euc-kr"
+		 * 
+		 */
+		
 	//────────────────[ 파일첨부 시작 ]────────────────────────────────────────────────────────
 		//파일형태로 넘어온 객체에서 이름을 읽고 문자열로 변환
 		String fileName = bfile.getOriginalFilename();
@@ -99,7 +106,13 @@ public class MvcBoardController {
 						new FileOutputStream(file));//안쪽에 있는게 실제생성스트림
 				bos.write(bytes);//쓰기처리
 				bos.close();
-				long size = file.length();//파일크기 처리
+				long size = file.length();//파일크기 Bit단위로 얻기
+				if(size!=0) {
+					double dSize = size/(double)(1024*1024);//MB단위로 변환
+					bsVO.setB_size(dSize);//담은 숫자타입의 파일크기를 저장함 ( 이게 컬럼에 들어가야하는 내용 )
+				}else {
+					bsVO.setB_size(0);
+				}
 				
 			} catch (Exception e) {
 				// TODO: handle exception
@@ -111,9 +124,24 @@ public class MvcBoardController {
 		
 		
 		//DB연동
+		//한글처리가 되어 있으므로 변환과정 생략
 		int result = 0;
 		result = boardLogic.cudBoard(bmVO,bsVO);	
 		
 		return "redirect:list.jsp";
+	}
+	
+	//상세보기 구현
+	@RequestMapping("getBoardDetail.spbd")
+	public String getBoardDetail(@RequestParam Map<String, Object> pMap
+								//pMap을 한줄만 읽었으므로 dao클래스의 재사용이 가능함.
+			,Model mod
+			,HttpServletResponse res) {
+		logger.info("getBoardDetail 호출 성공");
+		List<Map<String, Object>> boardList = null;
+		boardList = boardLogic.getBoardDetail(pMap,res);
+
+		mod.addAttribute("getBoardList",boardList);
+		return "forward:read.jsp";
 	}
 }

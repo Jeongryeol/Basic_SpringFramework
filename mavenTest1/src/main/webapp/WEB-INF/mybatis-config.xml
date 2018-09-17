@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- 사용자 정의 알리아스명 지정하기 -->
+<!-- 	<typeAliases>
+		<typeAlias alias="ovo" type="com.vo.OrderVO"/>
+	</typeAliases> -->
+	<mappers>
+		<mapper resource="com/mybatis/mapper/test.xml"/>
+	</mappers>
+</configuration>

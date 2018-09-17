@@ -131,4 +131,12 @@ public class MvcBoardLogic {
 		}
 		return result;
 	}
+	
+	//상세보기 DB연동
+	public List<Map<String, Object>> getBoardDetail(Map<String, Object> pMap, HttpServletResponse res) {
+		logger.info("getBoardDetail 호출 성공");
+		List<Map<String, Object>> boardList = null;
+		boardList = sqlMapBoardDao.getBoardList(pMap);
+		return boardList;
+	}
 }

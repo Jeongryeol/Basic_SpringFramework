@@ -87,8 +87,8 @@
 		                       ,to_char(sysdate, 'YYYY-MM-DD'),#{b_pwd})
 	</insert>
 	<insert id="boardSInsert" parameterMap="pBSVO"> <!-- parameterType="map"> -->
-		INSERT INTO boardsub(b_noa, b_seq, b_file, b_img)
-		                 VALUES(#{b_no}, 1, #{b_file}, #{b_img})
+		INSERT INTO boardsub(b_no, b_seq, b_file, b_img,b_size)
+		                 VALUES(#{b_no}, 1, #{b_file}, #{b_img},#{b_size})
 	</insert>
 	
 	
@@ -138,13 +138,20 @@
 	<select id="getBoardList" parameterType="map" resultType="map"><!-- resultMap="rBMVO"> -->
 		SELECT
 		      a.b_no, a.b_title, a.b_name, a.b_content
-		     ,a.b_date, a.b_hit, NVL(a.b_file,'없음') b_file, a.b_pwd
+		     ,a.b_date, a.b_hit
+		     ,NVL(a.b_file,'없음') b_file
+		     ,a.b_pwd
 		     ,a.b_group, a.b_pos, a.b_step, a.rno
+		     ,DECODE(sign(a.b_size-1 )
+		     			,1,a.b_size||'mb'
+		     			,0,0||'mb'
+		     			,-1,0||a.b_size||'mb') b_size
 		  FROM (
 		        SELECT
 		              bm.b_no, bm.b_title, bm.b_name, bm.b_content
 		             ,bm.b_date, bm.b_hit, NVL(bs.b_file,'없음') b_file, bm.b_pwd
 		             ,bm.b_group, bm.b_pos, bm.b_step, rownum rno
+		             ,bs.b_size
 		         FROM boardMaster bm, boardSub bs
 		        WHERE bm.b_no = bs.b_no(+)   
 		       )a 
