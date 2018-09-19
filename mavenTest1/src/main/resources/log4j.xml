@@ -10,7 +10,7 @@
 		<layout class="org.apache.log4j.PatternLayout">
 		<!-- <param name="ConversionPattern" value="%-5p: %c - %m%n" /> -->
 <!-- 			<param name="ConversionPattern" value="[%p]	%c ■ %M() %m%n"/> -->
-			<param name="ConversionPattern" value="%-12.12d┃%5p ┃ %50.50C :%4.4L - %m%n"/>
+			<param name="ConversionPattern" value="┃ %-12.12d ┃%5p ┃ %50.50C :%4.4L - %m%n"/>
 		</layout>
 	</appender>
 	
@@ -38,7 +38,12 @@
  -->
 	
 	<!-- Application Loggers -->
+	<!-- 로그 이벤트가 발생하는 부분을 그룹화 하여 필요한 그룹의 로그만을 출력 -->
 	<logger name="com.kosmo.mvc">
+		<level value="info" />
+	</logger>
+	
+	<logger name="com.kosmo.board">
 		<level value="info" />
 	</logger>
 	
