@@ -12,14 +12,24 @@
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	<context:component-scan base-package="com.kosmo.mvc" />
+	<context:component-scan base-package="com.kosmo.board" />
 
 	<!-- Enables the Spring MVC @Control6ler programming model -->
 	<annotation-driven />
 	
 	<!-- [-[추가]-]트랜잭션처리를 어노테이션으로 할때 삽입해야하는 코드 -->
-	<tx:annotation-driven/>
+	<tx:annotation-driven/><!-- Logic계층에서 적용하였음. -->
+
+	
+	<!-- [-[추가]-]첨부파일처리하는 멀티파트리졸버 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+   	<!-- 10MB이하 / 대용량 첨부파일은 WAS에서 관리하지 않음. -->
+      <beans:property name="maxUploadSize" value="10485760"/>
+    <!-- 첨부파일이 있을 경우 반드시 POST처리 함  -->
+   </beans:bean>
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<!-- 스프링이 기본적으로 읽는 소스파일들 -->
 	<resources mapping="/resources/**" location="/resources/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
