@@ -36,9 +36,21 @@
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg index="0" ref="sqlSessionFactory"/><!-- 생성자 주입법 -->
 	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 	<!-- Logic에서 사용할 Dao클래스에 SqlSession을 주입함 -->
+	<!-- 처음 Maven형식 실습때 추가한 Setter객체 주입법 -->
 	<bean id="sqlTestDao" class="com.kosmo.mvc.SqlTestDao">
 		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
 	</bean>
+	<!-- googleMap을 게시판으로 구현하는 Setter객체 주입법 -->
+	<bean id="sqlBoardDao" class="com.kosmo.board.SqlBoardDao">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
+	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- Logic layer TRANSACTION CONFIGURATION :: service단에서 찾아옴-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="data-source-target"/><!-- 트랜잭션처리로 개입하려하는 DB계정정보를 참조 -->
+	</bean>	
+	<!-- 없으면 에러발생 : [500] No bean named 'transactionManager' available: No matching PlatformTransactionManager bean found for qualifier 'transactionManager' -->
 <!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 </beans>

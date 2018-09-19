@@ -8,6 +8,7 @@
 		<typeAlias alias="ovo" type="com.vo.OrderVO"/>
 	</typeAliases> -->
 	<mappers>
+		<mapper resource="com/mybatis/mapper/board.xml"/>
 		<mapper resource="com/mybatis/mapper/test.xml"/>
 	</mappers>
 </configuration>
