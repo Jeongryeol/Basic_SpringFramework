@@ -70,7 +70,7 @@ public class BoardLogic {
 		bmVO.setB_no(b_no);
 		sqlBoardDao.boardMInsert(bmVO);
 		if(bsVO.getB_file()!=null && bsVO.getB_file().length()>1) {//첨부파일이 있다
-			bsVO.setB_noS(b_no);
+			bsVO.setB_no(b_no);
 			sqlBoardDao.boardSInsert(bsVO);
 		}
 		result = 1;

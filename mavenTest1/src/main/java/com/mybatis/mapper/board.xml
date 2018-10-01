@@ -214,25 +214,25 @@
 <!--
 CREATE OR REPLACE PROCEDURE JSP.proc_board_test(pno IN number, msg OUT varchar2)
 IS
-    -- 변수선언이 필요할 때, 이곳에서 선언
-    v_no number(5) := 0; -- 초기화
-    v_name varchar2(30) := '';-- 초기화
-    CURSOR cur_board IS --커서 초기화
+    // 변수선언이 필요할 때, 이곳에서 선언
+    v_no number(5) := 0; // 초기화
+    v_name varchar2(30) := '';// 초기화
+    CURSOR cur_board IS //커서 초기화
         SELECT b_no, b_name FROM BOARDMASTER
-         WHERE b_no = pno; -- 커서에 초기화될 SELECT쿼리
+         WHERE b_no = pno; // 커서에 초기화될 SELECT쿼리
 BEGIN
-    --커서열기 ( 반드시 사용후 닫아줘야함 )
+    //커서열기 ( 반드시 사용후 닫아줘야함 )
     OPEN cur_board;
     
-    --반복문
+    //반복문
     FOR i IN 1..3 LOOP
-        --FETCH : 조회된 결과의 로우에 해당하는 각 컬럼에 커서를 올리는 명령어
+        //FETCH : 조회된 결과의 로우에 해당하는 각 컬럼에 커서를 올리는 명령어
         FETCH cur_board INTO v_no, v_name;
-        --무한반복 방지코드 반드시 관리
-        EXIT WHEN cur_board%NOTFOUND;--없으면 탈출하라.
+        //무한반복 방지코드 반드시 관리
+        EXIT WHEN cur_board%NOTFOUND;//없으면 탈출하라.
     END LOOP;
     
-    --커서닫기
+    //커서닫기
     CLOSE cur_board;
     
     msg := '글번호는 '||v_no||'이고 , 작성자는 '||v_name||'입니다.';
