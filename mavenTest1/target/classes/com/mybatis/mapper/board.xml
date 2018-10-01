@@ -68,6 +68,8 @@
 		<result property="b_size"		column="b_size" />
 	</resultMap>
 <!-- ──────────────────────────────────────────────────────────────────────────── -->
+
+<!-- 조회수를 카운트하는 쿼리문 -->
 	<select id="totalCount" parameterType="int" resultType="int">
 		SELECT count(*) total
 		 FROM boardMaster bm, boardSub bs
@@ -78,26 +80,14 @@
 		   set b_hit = b_hit + 1
 		 where b_no =#{b_no}
 	</update>
-	<insert id="boardMInsert" parameterMap="pBMVO"> <!-- parameterType="map"> -->
-		INSERT INTO boardmaster(b_no, b_name, b_title, b_content
-		                       ,b_group, b_pos, b_step
-		                       ,b_date, b_pwd)
-		                 VALUES(#{b_no}, #{b_name}, #{b_title}, #{b_content}
-		                       ,#{b_group}, #{b_pos}, #{b_step}
-		                       ,to_char(sysdate, 'YYYY-MM-DD'),#{b_pwd})
-	</insert>
-	<insert id="boardSInsert" parameterMap="pBSVO"> <!-- parameterType="map"> -->
-		INSERT INTO boardsub(b_no, b_seq, b_file, b_img,b_size)
-		                 VALUES(#{b_no}, 1, #{b_file}, #{b_img},#{b_size})
-	</insert>
 	
 	
-	
-<!-- 그룹번호 채번하는 쿼리문 추가(새글쓰기에서 필요) -->
+<!-- 글 번호 채번하는 쿼리문 -->
 	<select id="getBno" parameterType="map" resultType="int">
 	SELECT seq_board_no.nextval
       FROM dual
 	</select>
+<!-- 그룹번호 채번하는 쿼리문 추가(새글쓰기에서 필요) -->
 	<select id="getGroup" parameterType="map" resultType="int">
 		SELECT
 		     NVL((SELECT /*+index_desc(boardmastr BMASTER_NO_PK)*/ b_no
@@ -108,12 +98,22 @@
 	</select>
 	
 	
-<!-- 	<statement id="stepUpdate" parameterType="map" resultType="map">
-		update boardMaster
-		      set b_step = b_step+1
-		  where b_group = #{b_group} 45(read.jsp)
-		     and b_step > #{b_step}   2(read.jsp)		
-	</statement> -->
+<!-- 첨부파일이 있을때 파일 첨부하는 쿼리문 -->
+	<insert id="boardMInsert" parameterMap="pBMVO"> <!-- parameterType="map"> -->
+		INSERT INTO boardmaster(b_no, b_name, b_title, b_content
+		                       ,b_group, b_pos, b_step
+		                       ,b_date, b_pwd)
+		                 VALUES(#{b_no}, #{b_name}, #{b_title}, #{b_content}
+		                       ,#{b_group}, #{b_pos}, #{b_step}
+		                       ,to_char(sysdate, 'YYYY-MM-DD'),#{b_pwd})
+	</insert>
+	<insert id="boardSInsert" parameterMap="pBSVO"> <!-- parameterType="map"> -->
+		INSERT INTO boardsub(b_no, b_seq, b_file, b_img,b_size)
+		                 VALUES(#{b_noS}, 1, #{b_file}, #{b_img},#{b_size})
+	</insert>
+	
+
+<!-- 글 수정 처리하기(저장) -->
 	<update id="boardMUpdate" parameterType="map">
 		update boardMaster
 		      set b_title = #{b_title}
@@ -122,6 +122,30 @@
 		         ,b_pwd = #{b_pwd}
 		  where b_no = #{b_no} 
 	</update>
+<!-- 글 수정 처리하기(저장시 첨부파일처리) -->
+	<update id="boardSUpdate" parameterType="map">
+		UPDATE boardSub
+		   SET b_file = #{b_file}
+			  ,b_size = #{b_size}
+		 WHERE b_no = #{b_no} 
+	</update>	
+
+
+<!-- 글 삭제처리하기 -->
+	<delete id="boardMDelete" parameterType="map">
+		DELETE boardMaster
+		 WHERE b_no = #{b_no} <!-- PK를 조건으로 걸어서 그 로우를 삭제 -->
+	</delete>
+<!-- 글 삭제처리할때 첨부파일이 있는경우 삭제하기 -->
+	<delete id="boardSDelete" parameterType="map">
+		DELETE boardSub
+		 WHERE b_no = #{b_no} <!-- PK를 조건으로 걸어서 그 로우를 삭제 -->
+	</delete>
+
+
+
+
+
 	<update id="stepUpdate" parameterType="map">
 		update boardMaster
 		      set b_step = b_step+1
@@ -175,15 +199,65 @@
 	     	<![CDATA[ AND a.rno <= #{end} ]]>
 	 	</if>	
 	 	</where>
-	 	ORDER BY a.b_group desc, a.b_step asc	
+	 	ORDER BY a.b_group desc, a.b_step desc	
 	</select>
+	
+	
+<!-- 프로시저 적용해보기!! -->	
+	<select id="proc_board_test" parameterType="com.vo.BoardMasterVO" statementType="CALLABLE">
+		{ call proc_board_test(#{b_no}<!-- #{b_no, mode=IN, jdbcType=NUMERIC, javaType=int} -->
+							  ,#{msg, mode=OUT, jdbcType=VARCHAR, javaType=String}
+							  )<!-- VO클래스를 이용하는 경우, VO클래스에 IN,OUT속성에 해당하는 변수들을 선언해두고, getter/setter를 준비해야한다. -->
+		}
+	</select>
+	
+<!--
+CREATE OR REPLACE PROCEDURE JSP.proc_board_test(pno IN number, msg OUT varchar2)
+IS
+    -- 변수선언이 필요할 때, 이곳에서 선언
+    v_no number(5) := 0; -- 초기화
+    v_name varchar2(30) := '';-- 초기화
+    CURSOR cur_board IS --커서 초기화
+        SELECT b_no, b_name FROM BOARDMASTER
+         WHERE b_no = pno; -- 커서에 초기화될 SELECT쿼리
+BEGIN
+    --커서열기 ( 반드시 사용후 닫아줘야함 )
+    OPEN cur_board;
+    
+    --반복문
+    FOR i IN 1..3 LOOP
+        --FETCH : 조회된 결과의 로우에 해당하는 각 컬럼에 커서를 올리는 명령어
+        FETCH cur_board INTO v_no, v_name;
+        --무한반복 방지코드 반드시 관리
+        EXIT WHEN cur_board%NOTFOUND;--없으면 탈출하라.
+    END LOOP;
+    
+    --커서닫기
+    CLOSE cur_board;
+    
+    msg := '글번호는 '||v_no||'이고 , 작성자는 '||v_name||'입니다.';
+END; 
+ -->
+	
+	
+	
+<!-- 프로시저 커서를 VO타입으로 해보기 -->
+	<select id="proc_board_test2" parameterType="map" resultMap="rBMVO" statementType="CALLABLE">
+		{ call proc_board_test2(#{key, mode=OUT, jdbcType=CURSOR, javaType=java.sql.ResultSet, resultMap=rBMVO})}
+	</select>
+	<!-- 	[[ 프로시저의 커서를 다루어서 VO타입으로 결과를 받을때 사고과정 ]] 
+			파라메터타입의 map으로 받은 것에 대하여 Map타입의 key로 대응하므로 {key} 알리아스를 넣어준다.
+			OUT타입으로 프로시저에서 sys_refcursor로 지정된 파라메터는 OUT모드로 설정되어야 하고,
+			DB에서 다루어진 커서는 마이바티스가 자바로 RS(ResultSet)으로 대응된다.
+			이때, 프로시저의 호출 결과reuslt형태를 resultMap으로 했고 (resultType이 아님) 지정된 알리아스이름("rBMVO")으로 나가야하므로
+			프로시저 OUT모드로 지정한 파라미터에 resultMap에도 같은 알리아스이름("rBMVO")이 설정되어야 익셉션이 발생하지 않는다. -->
+<!-- 
+CREATE OR REPLACE PROCEDURE JSP.proc_board_test2(b_cursor OUT sys_refcursor)
+IS
+BEGIN
+    OPEN b_cursor FOR
+        SELECT b_no, b_name, b_title FROM boardmaster;
+END;
+ -->
+	
 </mapper>
-
-
-
-
-
-
-
-
-

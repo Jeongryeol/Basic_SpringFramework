@@ -59,19 +59,25 @@
 		//alert("updateForm호출 성공");
 		$("#dl_read").dialog('close');
 		$("#dl_update").dialog({
-			href : './mvcBoard.spbd?gubun=getBoardList&one=update&b_no=' + pb_no,
+			href : './boardUpdateForm?b_no=' + pb_no,
 		});
 		$("#dl_update").dialog('open');
 	}
-	//글수정  처리하기
+	//글수정  저장처리하기
 	function updateAction() {
-		$("#f_update").attr("method", "post");
-		$("#f_update").attr("action", "./mvcBoard.spbd");
-		$("#f_update").submit(); //이 때 서버로 전송이 일어남
+		//제이쿼리는 action에서 ? 파라메터로 넘길수 없음 (href처럼 사용할 수 없다.)
+		//따라서 히든으로 넘겨옴 + pwVerifyForm.jsp에서 확인하기
+		$("#f_update").attr("method", "POST");
+		$("#f_update").attr("action", "./boardMUpdate");
+		$("#f_update").submit(); //이 때 폼태그의 서버로 전송이 일어남
 	}
 	//글삭제할 때
-	function deleteForm() {
+	function deleteForm(pb_no,pb_pwd,pb_file) {
 		alert("deleteForm호출 성공");
+		var url = "pwVerifyForm.jsp?b_no="+pb_no+"&b_pwd="+pb_pwd+"&b_file="+pb_file;//get방식으로 넘겨줄 변수
+		//삭제를 위한 창 띄우기
+		cmm_window_popup(url,'450','200',"pwVerifyForm");//commons.js 참조
+		//공개되지 않기를 원하므로, 폼전송의 히든을 적용하거나 쿠키에 저장하여 넘기는 것도 한 방법
 	}
 	//글상세보기에서 글목록 돌아갈때
 	function dg_listReload() {
@@ -100,7 +106,7 @@
 	function boardInsert() {
 		alert("gubun:" + $("#gubun").val());
 		$("#f_insert").attr("method", "post");
-		$("#f_insert").attr("action", "./boardInsert.spbd");
+		$("#f_insert").attr("action", "./boardInsert");
 		$("#f_insert").submit(); //이 때 서버로 전송이 일어남
 		alert("글쓰기 등록 요청했습니다.");
 		console.log("글쓰기 등록 요청했습니다.");
@@ -129,7 +135,7 @@
 		    ]], */
  		    columns:[[//Map으로 받았을때
 		        {field:'B_NO',title:'글번호',width:50, align:'center'},
-		        {field:'B_TITLE',title:'제목',width:300, align:'center'},
+		        {field:'B_TITLE',title:'제목',width:292, align:'center'},
 		        {field:'B_NAME',title:'이름',width:70, align:'center'},
 		        {field:'B_FILE',title:'첨부파일',width:350, align:'center'},
 		        {field:'B_SIZE',title:'크기',width:80, align:'center'},
@@ -244,14 +250,15 @@
 				</tr>
 				<tr>
 					<td>첨부파일</td><!-- 파일을 첨부할때 변수명에 특수문자는 안됨. -->
-					<td><input id="bFile" name="bFile" class="easyui-filebox" style="width: 350px"></td>
+					<td><input id="bfile" name="bfile" class="easyui-filebox" style="width: 350px"></td>
 				</tr>
 
 			</table>
 		</form>
 		<table align="center">
 			<tr>
-				<td><a href="javascript:boardInsert()" class="easyui-linkbutton">저장</a> <a href="javascript:$('#dl_boardInsert').dialog('close');" class="easyui-linkbutton">닫기</a></td>
+				<td><a href="javascript:boardInsert()" class="easyui-linkbutton">저장</a>
+				<a href="javascript:$('#dl_boardInsert').dialog('close');" class="easyui-linkbutton">닫기</a></td>
 			</tr>
 		</table>
 	</div>

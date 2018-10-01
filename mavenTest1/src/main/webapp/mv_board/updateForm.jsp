@@ -5,7 +5,6 @@
 	List<Map<String,Object>> getBoardList = 
 		(List<Map<String,Object>>)request.getAttribute("boardList");
 	out.print("read.jsp");
-	
 	String rb_title = "";
 	String rb_name = "";
 	String rb_content = "";
@@ -14,8 +13,6 @@
 	String rb_group = "";
 	String rb_pos = "";
 	String rb_step = "";
-	String rb_file = "";
-	
  	if(getBoardList!=null && getBoardList.size()>0){
 		rb_title = getBoardList.get(0).get("B_TITLE").toString();
 		rb_name = getBoardList.get(0).get("B_NAME").toString();
@@ -25,63 +22,67 @@
 		rb_group = getBoardList.get(0).get("B_GROUP").toString();
 		rb_pos = getBoardList.get(0).get("B_POS").toString();
 		rb_step = getBoardList.get(0).get("B_STEP").toString();
-		rb_file = getBoardList.get(0).get("B_FILE").toString();
 	}
 	
-%>    
+%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>Insert title here</title>
+<meta charset="UTF-8">
+<title>수정화면</title>
 <!-- 공통 코드 include처리 -->
 <%@ include file="../include/commonUI.jsp" %>
 </head>
 <body>
-	<script type="text/javascript">
-		$(document).ready(function(){
-	<%-- 		$("#b_title").textbox('setValue','<%=rb_title%>');
-			$("#b_name").textbox('setValue','<%=rb_name%>');
-			$("#b_content").textbox('setValue','<%=rb_content%>');
-			$("#b_pwd").textbox('setValue','<%=rb_pwd%>'); --%>
-		});
-	</script>
+
+	<form id="f_update" method="post" enctype="multipart/form-data">
+	
+		<!-- JQuery는 form태그를 전송할때 action의 ?로 파라미터로써 넘길 수 없다. 따라서 히든으로 넘겨야함. -->
+		<input type="hidden" name="b_no" value="<%=rb_no %>"/>
+	
 	<table align="center">
 		<tr>
 			<td>제목</td>
 			<td>
-				<input id="b_title" value="<%=rb_title%>" name="b_title" data-options="width:'250px'" class="easyui-textbox" readonly>
+				<input id="b_title" value="<%=rb_title%>" name="b_title" data-options="width:'250px'" class="easyui-textbox">
 			</td>
 		</tr>
 		<tr>
 			<td>작성자</td>
 			<td>
-				<input id="b_name" value="<%=rb_name%>" name="b_name" class="easyui-textbox" readonly>
+				<input id="b_name" value="<%=rb_name%>" name="b_name" class="easyui-textbox">
 			</td>
 		</tr>
 		<tr>
 			<td>내용</td>
 			<td>
-				<input id="b_content" value="<%=rb_content%>" name="b_content" data-options="multiline:'true', width:'350px', height:'90px'" class="easyui-textbox" readonly>
+				<input id="b_content" value="<%=rb_content%>" name="b_content" data-options="multiline:'true', width:'350px', height:'90px'" class="easyui-textbox">
 			</td>
 		</tr>
 		<tr>
 			<td>비밀번호</td>
 			<td>
-				<input id="b_pwd" value="<%=rb_pwd%>" name="b_pwd" class="easyui-passwordbox" readonly>
+				<input id="b_pwd" value="<%=rb_pwd%>" name="b_pwd" class="easyui-passwordbox">
 			</td>
 		</tr>
-	</table>
+		<tr>
+			<td>첨부파일</td>
+			<td>
+				<input id="bfile" name="b_file" class="easyui-filebox" style="width: 350px">
+			</td>
+		</tr>
+		</table>
 	</form>
 	<table align="center">
 		<tr>
 			<td>
-				<a href="javascript:repleForm('<%=rb_no%>','<%=rb_group%>','<%=rb_pos%>','<%=rb_step%>')" class="easyui-linkbutton">댓글</a>
-				<a href="javascript:updateForm('<%=rb_no %>')" class="easyui-linkbutton">수정</a>
-				<a href="javascript:deleteForm('<%=rb_no %>','<%=rb_pwd %>','<%=rb_file %>')" class="easyui-linkbutton">삭제</a>
-				<a href="javascript:dg_listReload()" class="easyui-linkbutton">목록</a>
+				<a href="javascript:updateAction()" class="easyui-linkbutton">저장</a>
+				<a href="javascript:$('#dl_update').dialog('close');" class="easyui-linkbutton">닫기</a>
 			</td>
 		</tr>
 	</table>
+	
+	</form>
+	
 </body>
 </html>

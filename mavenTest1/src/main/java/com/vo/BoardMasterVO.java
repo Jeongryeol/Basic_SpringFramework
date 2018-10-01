@@ -12,6 +12,7 @@ public class BoardMasterVO {
 	private int    b_step   =0;//  
 	private String b_pwd    ="";//  
 	
+	private String msg = "";//테스트용 프로시저의 OUT속성을 위해 추가한 변수
 	
 	private BoardSubVO bsVO = null;
 	
@@ -83,5 +84,11 @@ public class BoardMasterVO {
 	}
 	public void setBsVO(BoardSubVO bsVO) {
 		this.bsVO = bsVO;
+	}
+	public String getMsg() {
+		return msg;
+	}
+	public void setMsg(String msg) {
+		this.msg = msg;
 	}
 }

@@ -46,4 +46,11 @@
 	<bean id="sqlBoardDao" class="com.kosmo.board.SqlBoardDao">
 		<property name="sqlSessionTemplate" ref="sqlSessionTemplate"/><!-- setter메소드가 없으면 에러가 발생함 -->
 	</bean>
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
+	<!-- Logic layer TRANSACTION CONFIGURATION :: service단에서 찾아옴-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="data-source-target"/><!-- 트랜잭션처리로 개입하려하는 DB계정정보를 참조 -->
+	</bean>	
+	<!-- 없으면 에러발생 : [500] No bean named 'transactionManager' available: No matching PlatformTransactionManager bean found for qualifier 'transactionManager' -->
+<!-- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── -->
 </beans>
